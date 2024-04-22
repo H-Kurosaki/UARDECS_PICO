@@ -1049,6 +1049,9 @@ for(i=0;i<U_HtmlLine;i++)
 for(i = 0; i < U_HtmlLine; i++)
 	       {UECS_EEPROM_writeLong(EEPROM_WEBDATA + i * 4, *(U_html[i].data));}
 
+  if (EEPROM.commit()) 
+  {Serial.println("EEPROM committed 1");} 
+  else {Serial.println("EEPROM commit skip 1");}
 
 }
 int HTTPGetFormDataEDITCCMPage()
@@ -1143,6 +1146,7 @@ int HTTPGetFormDataEDITCCMPage()
 		UECS_EEPROM_SaveCCMType(ccmid);
 		}
 	
+	if (EEPROM.commit()) {Serial.println("EEPROM successfully committed 5C");}
 	
 	return ccmid;
 }
@@ -1222,6 +1226,10 @@ void HTTPGetFormDataLANSettingPage()
            		}
        		}
 
+  if (EEPROM.commit()) 
+  {Serial.println("EEPROM committed 3");} 
+  else {Serial.println("EEPROM commit skip 3");}
+
 	return ;
 
 }
@@ -1251,7 +1259,8 @@ void HTTPGetFormDataFillCCMAttributePage()
 	UECS_EEPROM_SaveCCMAttribute(i);
 	}
 	
-	
+
+
 
 }
 //---------------------------------------------####################
@@ -1295,13 +1304,15 @@ UECSclient=UECSlogserver.available();
 									{
 									strcpy_P(U_ccmList[i].typeStr, U_ccmList[i].type);
 									UECS_EEPROM_SaveCCMType(i);
-									}
-						HTTPPrintRedirect(3);
+					  				}
+		            	if (EEPROM.commit()) {Serial.println("EEPROM successfully committed 5A");}
+                		HTTPPrintRedirect(3);
 						}
 				//Attribute Reset
 				else if(ccmid-100>=0 && ccmid-100<U_MAX_CCM)
 						{
 						HTTPGetFormDataFillCCMAttributePage();
+		            	if (EEPROM.commit()) {Serial.println("EEPROM successfully committed 5B");}
 						HTTPPrintRedirect(3);
 						}
 				//Err
@@ -1310,22 +1321,8 @@ UECSclient=UECSlogserver.available();
 				else{HTTPsendPageEDITCCM(ccmid);}
 				
 				}
-		/*
-		else if(UECSFindPGMChar(UECSbuffer,&(UECSaccess_NOSPC_GETP4[0]),&progPos))//reset CCM type
-				{
-				for(int i=0;i<U_MAX_CCM;i++)
-					{
-					strcpy_P(U_ccmList[i].typeStr, U_ccmList[i].type);
-					UECS_EEPROM_SaveCCMType(i);
-					}
-					
-					HTTPPrintRedirectP3();
-				}
-		else if(UECSFindPGMChar(UECSbuffer,&(UECSaccess_NOSPC_GETP5A[0]),&progPos))//reset CCM type
-				{
-					HTTPGetFormDataFillCCMAttributePage();
-					HTTPPrintRedirectP3();
-				}*/
+
+
 		else {HTTPsendPageError();}
   }
   UECSclient.stop();
@@ -1343,6 +1340,8 @@ void UECSupdate16520portReceive( UECSTEMPCCM* _tempCCM, unsigned long _millis){
     _tempCCM->address = UECS_UDP16520.remoteIP();   
     UECSbuffer[UECS_UDP16520.read(UECSbuffer, BUF_SIZE-1)]='\0';
     UDPFilterToBuffer();
+    
+    Serial.println(UECSbuffer);
 
     if(UECSparseRec( _tempCCM,&matchCCMID))
     	{UECScheckUpDate( _tempCCM, _millis,matchCCMID);}
@@ -1361,7 +1360,7 @@ void UECSupdate16529port( UECSTEMPCCM* _tempCCM){
       _tempCCM->address = UECS_UDP16529.remoteIP();   
       UECSbuffer[UECS_UDP16529.read(UECSbuffer, BUF_SIZE-1)]='\0';
 	  UDPFilterToBuffer();
-	  
+	   Serial.println(UECSbuffer);
 	  
       if(UECSresNodeScan()){
          UECS_UDP16529.beginPacket(_tempCCM->address, 16529);
@@ -1384,6 +1383,7 @@ void UECSupdate16521port( UECSTEMPCCM* _tempCCM){
    	   ClearMainBuffer();
       _tempCCM->address = UECS_UDP16521.remoteIP();   
       UECSbuffer[UECS_UDP16521.read(UECSbuffer, BUF_SIZE-1)]='\0';
+       Serial.println(UECSbuffer);
 	  UDPFilterToBuffer();
 	  UECSresCCMSearchAndSend(_tempCCM);
    }
@@ -1394,6 +1394,8 @@ void UECSupdate16521port( UECSTEMPCCM* _tempCCM){
 
 
 void UECSsetup(){
+	
+EEPROM.begin(4096);
 
 UECSCheckProgramUpdate();
 delay(300);
@@ -1435,6 +1437,11 @@ for(i=0;i<(EEPROM_CCMTOP-EEPROM_PROGRAMDATETIME);i++)
 		}
 	if(UECSbuffer[i]=='\0'){break;}
 	}
+	
+  if (EEPROM.commit()) 
+  {Serial.println("EEPROM committed 6");} 
+  else {Serial.println("EEPROM commit skip 6");}
+	
 }
 //---------------------------------------------
 
@@ -1496,15 +1503,7 @@ for(i=0;i<MAX_CCMTYPESIZE;i++)
 	}
 	U_ccmList[ccmid].typeStr[i]='\0';
 	
-/*
-U_ccmList[ccmid].baseAttribute[AT_ROOM]=EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_ROOM) & 127;
-U_ccmList[ccmid].baseAttribute[AT_REGI]=EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_REGI) & 127;
-U_ccmList[ccmid].baseAttribute[AT_ORDE]=
-	(EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_ORDE_L)+
-	EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_ORDE_H)*256) & 32767;
-U_ccmList[ccmid].baseAttribute[AT_PRIO]=EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_PRIO) & 31;
-U_ccmList[ccmid].attribute[AT_PRIO] =U_ccmList[ccmid].baseAttribute[AT_PRIO];
-*/
+
 U_ccmList[ccmid].baseAttribute[AT_ROOM]=EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_ROOM);
 U_ccmList[ccmid].baseAttribute[AT_REGI]=EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_REGI);
 U_ccmList[ccmid].baseAttribute[AT_ORDE]=(EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_ORDE_L)+EEPROM.read(ccmid*EEPROM_L_CCM_TOTAL+EEPROM_CCMTOP+EEPROM_L_CCM_ORDE_H)*256);
@@ -1518,6 +1517,10 @@ if(U_ccmList[ccmid].baseAttribute[AT_ROOM]==0xff)
 	U_ccmList[ccmid].baseAttribute[AT_ORDE]=1;
 	U_ccmList[ccmid].baseAttribute[AT_PRIO]=U_ccmList[ccmid].attribute[AT_PRIO];
 	UECS_EEPROM_SaveCCMAttribute(ccmid);
+	
+	  if (EEPROM.commit()) 
+	  {Serial.println("EEPROM committed 7");} 
+	  else {Serial.println("EEPROM commit skip 7");}
 	}
 U_ccmList[ccmid].attribute[AT_PRIO] =U_ccmList[ccmid].baseAttribute[AT_PRIO];
 
@@ -1543,6 +1546,9 @@ void UECSstartEthernet(){
   UECS_UDP16520.begin(16520);
   UECS_UDP16529.begin(16529);
   UECS_UDP16521.begin(16521);
+  
+  Serial.begin(9600);
+
 }
 
 //---------------------------------------------------------
@@ -1613,11 +1619,14 @@ if(UECSnowmillis<UECSlastmillis)
     UECSautomaticSendManager();
     UserEverySecond();
     
+
+    
     for(int i = 0; i < U_MAX_CCM; i++)
       {
      if(U_ccmList[i].sender && U_ccmList[i].flagStimeRfirst && U_ccmList[i].ccmLevel != NONE)
      	{
         UECSCreateCCMPacketAndSend(&U_ccmList[i]);
+          Serial.println("Send");
        }
 
     }   
@@ -2198,9 +2207,15 @@ if(U_html[i].data==data)
 	{
 	*(U_html[i].data)=value;
 	UECS_EEPROM_writeLong(EEPROM_WEBDATA + i * 4, *(U_html[i].data));
+	
+	  if (EEPROM.commit()) 
+	  {Serial.println("EEPROM committed 8");} 
+	  else {Serial.println("EEPROM commit skip 8");}
+	
 	return true;
 	}
 }
+
 return false;
 }
 

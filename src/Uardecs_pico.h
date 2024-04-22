@@ -1,5 +1,5 @@
 /*
-  Uardecs.h - Library for UECS 
+  Uardecs_pico.h - Library for UECS 
 
 
   Ken-ichiro Yasuba 2013.
@@ -10,19 +10,16 @@
 #define Uardecs_pico_h
 
 
-#define _ARDUINIO_MEGA_SETTING
-//#define _ARDUINIO_UNO_SETTING
-
+#define _RSPI_PICO_SETTING
 
 #include <Ethernet3.h>
 #include <EthernetUdp3.h>
 
 #include <Arduino.h>
 #include <SPI.h>   
-#include "Uardecs_pico_EEPROM.h"
+#include <EEPROM.h>//RPI2040 EEPROM emulation
 #include <stdio.h>
 #include <avr/dtostrf.h>
-//#include <avr/pgmspace.h>
 
 
 #define CHOICES(s) sizeof(s)/sizeof(s[0])
@@ -216,7 +213,7 @@ const char LastUpdate[] PROGMEM="<BR>Last update:";
 const char ProgramDate[] PROGMEM=__DATE__;
 const char ProgramTime[] PROGMEM=__TIME__;
 
-#if defined(_ARDUINIO_MEGA_SETTING)
+
 	#define BUF_SIZE 500
 	#define BUF_HTTP_REFRESH_SIZE 479  //BUF_SIZE-(MAX_TYPE_CHAR+1)
 //EEPROM 4k
@@ -235,45 +232,8 @@ const char ProgramTime[] PROGMEM=__TIME__;
 	#define EEPROM_NODENAME	3425
 	#define EEPROM_WEBDATA	3450
 	#define EEPROM_DATAEND	4095
-/*
-#elif defined(__AVR_ATmega644__) || defined(__AVR_ATmega644A__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__)
-	#define BUF_SIZE 400
-	#define BUF_HTTP_REFRESH_SIZE 379
-	#define EEPROM_PROGRAMDATETIME	976
-	#define EEPROM_CCMTOP	1000
-	#define EEPROM_CCMEND	1799
-	#define EEPROM_DATATOP	1600
-	#define EEPROM_IP		1600
-	#define EEPROM_SUBNET	1604
-	#define EEPROM_GATEWAY	1608
-	#define EEPROM_DNS		1612
-	#define EEPROM_ROOM		1616
-	#define EEPROM_REGION	1617
-	#define EEPROM_ORDER_L	1618
-	#define EEPROM_ORDER_H	1619
-	#define EEPROM_NODENAME	1625
-	#define EEPROM_WEBDATA	1650
-	#define EEPROM_DATAEND	2047*/
-#else
-	#define BUF_SIZE 300
-	#define BUF_HTTP_REFRESH_SIZE 279  //BUF_SIZE-(MAX_TYPE_CHAR+1)
-//EEPROM 1k
-	#define EEPROM_PROGRAMDATETIME	326
-	#define EEPROM_CCMTOP	350
-	#define EEPROM_CCMEND	799
-	#define EEPROM_DATATOP	800
-	#define EEPROM_IP		800
-	#define EEPROM_SUBNET	804
-	#define EEPROM_GATEWAY	808
-	#define EEPROM_DNS		812
-	#define EEPROM_ROOM		816
-	#define EEPROM_REGION	817
-	#define EEPROM_ORDER_L	818
-	#define EEPROM_ORDER_H	819
-	#define EEPROM_NODENAME	825
-	#define EEPROM_WEBDATA	850
-	#define EEPROM_DATAEND	1023
-#endif
+
+
 
 #define EEPROM_L_CCM_TYPETXT	0
 #define EEPROM_L_CCM_ROOM		21
@@ -431,19 +391,7 @@ void UECSupdate16529port(UECSTEMPCCM* _tempCCM);
 void UECSupdate16521port(UECSTEMPCCM* _tempCCM);
 void UECSsetup();
 void UECSloop();
-/*
-signed char UECSsetCCM(boolean _sender,
-signed char _num,
-const char* _name,
-const char* _type,
-const char* _unit,
-unsigned short _room,
-unsigned short _region,
-unsigned short _order,
-unsigned short _priority,
-unsigned char _decimal,
-char _ccmLevel);
-*/
+
 
 void UECSsetCCM(boolean _sender,
 signed char _num,
