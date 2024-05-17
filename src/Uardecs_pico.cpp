@@ -1529,7 +1529,8 @@ U_ccmList[ccmid].attribute[AT_PRIO] =U_ccmList[ccmid].baseAttribute[AT_PRIO];
 //---------------------------------------------
 void UECSstartEthernet(){
   
-	Ethernet.setCsPin(17);//PICO EVB CS PIN
+	//Ethernet.setCsPin(17);//PICO EVB CS PIN
+	Ethernet.init(17);//PICO EVB CS PIN
   if(U_orgAttribute.status&STATUS_SAFEMODE)
   	{
   	byte defip[]     = {192,168,1,7};

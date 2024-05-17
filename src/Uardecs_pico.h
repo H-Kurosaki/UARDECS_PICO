@@ -12,8 +12,8 @@
 
 #define _RSPI_PICO_SETTING
 
-#include <Ethernet3.h>
-#include <EthernetUdp3.h>
+#include <Ethernet2.h>
+#include <EthernetUdp2.h>
 
 #include <Arduino.h>
 #include <SPI.h>   
