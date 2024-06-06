@@ -4,13 +4,17 @@
 
   Ken-ichiro Yasuba 2013.
   updated by Hideto Kurosaki 2022.4.
-
 */
 #ifndef Uardecs_pico_h
 #define Uardecs_pico_h
 
 
 #define _RSPI_PICO_SETTING
+
+#define _RSPI_PICO_PIN_CS		17
+//#define _RSPI_PICO_PIN_INTn		21
+#define _RSPI_PICO_PIN_RSTn		20
+
 
 #include <Ethernet2.h>
 #include <EthernetUdp2.h>

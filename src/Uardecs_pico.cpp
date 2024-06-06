@@ -1341,7 +1341,7 @@ void UECSupdate16520portReceive( UECSTEMPCCM* _tempCCM, unsigned long _millis){
     UECSbuffer[UECS_UDP16520.read(UECSbuffer, BUF_SIZE-1)]='\0';
     UDPFilterToBuffer();
     
-    Serial.println(UECSbuffer);
+    //Serial.println(UECSbuffer);
 
     if(UECSparseRec( _tempCCM,&matchCCMID))
     	{UECScheckUpDate( _tempCCM, _millis,matchCCMID);}
@@ -1528,9 +1528,14 @@ U_ccmList[ccmid].attribute[AT_PRIO] =U_ccmList[ccmid].baseAttribute[AT_PRIO];
 
 //---------------------------------------------
 void UECSstartEthernet(){
-  
-	//Ethernet.setCsPin(17);//PICO EVB CS PIN
-	Ethernet.init(17);//PICO EVB CS PIN
+
+pinMode(_RSPI_PICO_PIN_RSTn,OUTPUT);
+digitalWrite(_RSPI_PICO_PIN_RSTn,LOW);//Hardware reset w5500
+delay(100);
+digitalWrite(_RSPI_PICO_PIN_RSTn,HIGH);
+	
+//Ethernet.setCsPin(_RSPI_PICO_PIN_CS);//PICO EVB CS PIN for Ethermet3.h
+Ethernet.init(_RSPI_PICO_PIN_CS);//PICO EVB CS PIN for Ethermet2.h
   if(U_orgAttribute.status&STATUS_SAFEMODE)
   	{
   	byte defip[]     = {192,168,1,7};
@@ -1582,10 +1587,12 @@ void UECSloop(){
   // 4. udp16521Receive and Send
   // << USER MANAGEMENT >>
   // 5. udp16520Send
-  HTTPcheckRequest();
-  UECSupdate16520portReceive(&UECStempCCM, UECSnowmillis);
-  UECSupdate16529port(&UECStempCCM);
-  UECSupdate16521port(&UECStempCCM);
+	
+	HTTPcheckRequest();
+  	UECSupdate16520portReceive(&UECStempCCM, UECSnowmillis);
+  	UECSupdate16529port(&UECStempCCM);
+  	UECSupdate16521port(&UECStempCCM);
+
   UserEveryLoop();  
 
  UECSnowmillis = millis();
@@ -1627,7 +1634,7 @@ if(UECSnowmillis<UECSlastmillis)
      if(U_ccmList[i].sender && U_ccmList[i].flagStimeRfirst && U_ccmList[i].ccmLevel != NONE)
      	{
         UECSCreateCCMPacketAndSend(&U_ccmList[i]);
-          Serial.println("Send");
+          //Serial.println("Send");
        }
 
     }   
