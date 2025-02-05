@@ -187,7 +187,7 @@ UDPAddPGMCharToBuffer(&(UECSccm_FOOTER1[0]));
 //send ccm
   UECS_UDP16520.beginPacket(_ccm->address, 16520);
   UECS_UDP16520.write(UECSbuffer);
-  
+
   if(UECS_UDP16520.endPacket()==0)
   		{
   			UECSresetEthernet();//when udpsend failed,reset ethernet status
@@ -1050,8 +1050,8 @@ for(i = 0; i < U_HtmlLine; i++)
 	       {UECS_EEPROM_writeLong(EEPROM_WEBDATA + i * 4, *(U_html[i].data));}
 
   if (EEPROM.commit()) 
-  {Serial.println("EEPROM committed 1");} 
-  else {Serial.println("EEPROM commit skip 1");}
+  {
+  } 
 
 }
 int HTTPGetFormDataEDITCCMPage()
@@ -1146,7 +1146,9 @@ int HTTPGetFormDataEDITCCMPage()
 		UECS_EEPROM_SaveCCMType(ccmid);
 		}
 	
-	if (EEPROM.commit()) {Serial.println("EEPROM successfully committed 5C");}
+	if (EEPROM.commit()) 
+		{
+		}
 	
 	return ccmid;
 }
@@ -1227,8 +1229,8 @@ void HTTPGetFormDataLANSettingPage()
        		}
 
   if (EEPROM.commit()) 
-  {Serial.println("EEPROM committed 3");} 
-  else {Serial.println("EEPROM commit skip 3");}
+  	{
+  	} 
 
 	return ;
 
@@ -1305,14 +1307,17 @@ UECSclient=UECSlogserver.available();
 									strcpy_P(U_ccmList[i].typeStr, U_ccmList[i].type);
 									UECS_EEPROM_SaveCCMType(i);
 					  				}
-		            	if (EEPROM.commit()) {Serial.println("EEPROM successfully committed 5A");}
+		            	if (EEPROM.commit()) {
+		            						}
                 		HTTPPrintRedirect(3);
 						}
 				//Attribute Reset
 				else if(ccmid-100>=0 && ccmid-100<U_MAX_CCM)
 						{
 						HTTPGetFormDataFillCCMAttributePage();
-		            	if (EEPROM.commit()) {Serial.println("EEPROM successfully committed 5B");}
+		            	if (EEPROM.commit()) 
+											{
+											}
 						HTTPPrintRedirect(3);
 						}
 				//Err
@@ -1360,12 +1365,11 @@ void UECSupdate16529port( UECSTEMPCCM* _tempCCM){
       _tempCCM->address = UECS_UDP16529.remoteIP();   
       UECSbuffer[UECS_UDP16529.read(UECSbuffer, BUF_SIZE-1)]='\0';
 	  UDPFilterToBuffer();
-	   Serial.println(UECSbuffer);
+	   //Serial.println(UECSbuffer);
 	  
       if(UECSresNodeScan()){
          UECS_UDP16529.beginPacket(_tempCCM->address, 16529);
          UECS_UDP16529.write(UECSbuffer);
-         
          if(UECS_UDP16529.endPacket()==0)
          	{
   			UECSresetEthernet(); //when udpsend failed,reset ethernet status
@@ -1383,7 +1387,7 @@ void UECSupdate16521port( UECSTEMPCCM* _tempCCM){
    	   ClearMainBuffer();
       _tempCCM->address = UECS_UDP16521.remoteIP();   
       UECSbuffer[UECS_UDP16521.read(UECSbuffer, BUF_SIZE-1)]='\0';
-       Serial.println(UECSbuffer);
+       //Serial.println(UECSbuffer);
 	  UDPFilterToBuffer();
 	  UECSresCCMSearchAndSend(_tempCCM);
    }
@@ -1439,8 +1443,8 @@ for(i=0;i<(EEPROM_CCMTOP-EEPROM_PROGRAMDATETIME);i++)
 	}
 	
   if (EEPROM.commit()) 
-  {Serial.println("EEPROM committed 6");} 
-  else {Serial.println("EEPROM commit skip 6");}
+  {
+  } 
 	
 }
 //---------------------------------------------
@@ -1519,8 +1523,10 @@ if(U_ccmList[ccmid].baseAttribute[AT_ROOM]==0xff)
 	UECS_EEPROM_SaveCCMAttribute(ccmid);
 	
 	  if (EEPROM.commit()) 
-	  {Serial.println("EEPROM committed 7");} 
-	  else {Serial.println("EEPROM commit skip 7");}
+	  	{
+	  	} 
+	  else {
+	  		}
 	}
 U_ccmList[ccmid].attribute[AT_PRIO] =U_ccmList[ccmid].baseAttribute[AT_PRIO];
 
@@ -1528,15 +1534,19 @@ U_ccmList[ccmid].attribute[AT_PRIO] =U_ccmList[ccmid].baseAttribute[AT_PRIO];
 
 //---------------------------------------------
 void UECSstartEthernet(){
-
+	
 pinMode(_RSPI_PICO_PIN_RSTn,OUTPUT);
 digitalWrite(_RSPI_PICO_PIN_RSTn,LOW);//Hardware reset w5500
-delay(100);
+delay(20);
 digitalWrite(_RSPI_PICO_PIN_RSTn,HIGH);
-	
+delay(20);
+
+
 //Ethernet.setCsPin(_RSPI_PICO_PIN_CS);//PICO EVB CS PIN for Ethermet3.h
 Ethernet.init(_RSPI_PICO_PIN_CS);//PICO EVB CS PIN for Ethermet2.h
-  if(U_orgAttribute.status&STATUS_SAFEMODE)
+
+
+	if(U_orgAttribute.status&STATUS_SAFEMODE)
   	{
   	byte defip[]     = {192,168,1,7};
   	//byte defsubnet[] = {255,255,255,0};
@@ -1553,16 +1563,15 @@ Ethernet.init(_RSPI_PICO_PIN_CS);//PICO EVB CS PIN for Ethermet2.h
   UECS_UDP16529.begin(16529);
   UECS_UDP16521.begin(16521);
   
-  Serial.begin(9600);
 
 }
 
 //---------------------------------------------------------
 void UECSresetEthernet()
 {
-  	//UECS_UDP16520.stop();
-  	//UECS_UDP16529.stop();
-  	//SPI.end();
+  	UECS_UDP16520.stop();
+  	UECS_UDP16529.stop();
+  	UECS_UDP16521.stop();
   	UECSstartEthernet();
 }
 //------------------------------------------------------------------------
@@ -2217,8 +2226,8 @@ if(U_html[i].data==data)
 	UECS_EEPROM_writeLong(EEPROM_WEBDATA + i * 4, *(U_html[i].data));
 	
 	  if (EEPROM.commit()) 
-	  {Serial.println("EEPROM committed 8");} 
-	  else {Serial.println("EEPROM commit skip 8");}
+	  	{
+	  	} 
 	
 	return true;
 	}
@@ -2320,7 +2329,6 @@ for(int id=0;id<U_MAX_CCM;id++)
 	         	{
 	  			UECSresetEthernet(); //when udpsend failed,reset ethernet status
 	         	}
-
 		}
 	
 	}

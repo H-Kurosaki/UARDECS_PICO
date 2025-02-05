@@ -15,7 +15,6 @@
 //コンパイル環境の構築や他機種からソースコード移植を行う場合の注意点を一番後ろに記載しています
 
 
-#include <Ethernet2.h>
 #include <Uardecs_pico.h>
 
 
@@ -239,7 +238,6 @@ else
     showValueStatus = U_ccmList[CCMID_cnd].value;
 }
 
-
 /*
 (1)コンパイル環境の構築(Arduino IDE1.8.19で確認済み)
 	(a)RP2040用ボードライブラリのインストール
@@ -252,9 +250,9 @@ else
 	(c)ツール→ボード→Raspberry Pi RP2040 Boards
 	から使用する適切な機種名を選んでください(Wiznet W5500-EVB-Picoなど)
 	
-	(d)スケッチ→ライブラリをインクルード→ライブラリを管理より
-	"Ethernet2"を検索しインストールします。
-
+	(d)https://github.com/H-Kurosaki/MyEthernet2
+	"MyEthernet2"をインストールします。zipファイルでダウンロードしたあと、解凍してlibrariesフォルダ内に置いてください。
+	
 	以上の処理(一度行えば次から不要です)で最低限このファイルがコンパイル可能な環境が整います。
 
 	以下の操作はボードを接続する事に毎回実行してください。

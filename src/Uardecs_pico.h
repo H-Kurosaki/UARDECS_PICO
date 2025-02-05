@@ -16,8 +16,8 @@
 #define _RSPI_PICO_PIN_RSTn		20
 
 
-#include <Ethernet2.h>
-#include <EthernetUdp2.h>
+#include <MyEthernet2.h>
+#include <MyEthernetUdp2.h>
 
 #include <Arduino.h>
 #include <SPI.h>   
