@@ -316,7 +316,7 @@ floatなどから変換する場合、10倍して整数にする処理が必要�
 	(c)ツール→ボード→Raspberry Pi RP2040 Boards
 	から使用する適切な機種名を選んでください(Wiznet W5500-EVB-Picoなど)
 	
-	(d)https://github.com/H-Kurosaki/MyEthernet2
+	(d)https://github.com/UECS/MyEthernet2
 	"MyEthernet2"をインストールします。zipファイルでダウンロードしたあと、解凍してlibrariesフォルダ内に置いてください。
 	
 	以上の処理(一度行えば次から不要です)で最低限このファイルがコンパイル可能な環境が整います。
