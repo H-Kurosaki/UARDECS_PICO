@@ -3,7 +3,7 @@
 
 
   Ken-ichiro Yasuba 2013.
-  updated by Hideto Kurosaki 2022.4.
+  updated by Hideto Kurosaki 2026.4.
 */
 #ifndef Uardecs_pico_h
 #define Uardecs_pico_h
@@ -404,7 +404,7 @@ const char* _type,
 const char* _unit,
 unsigned short _priority,
 unsigned char _decimal,
-char _ccmLevel);
+signed char _ccmLevel);
 
 extern const int U_MAX_CCM;
 extern const int U_HtmlLine;
@@ -449,7 +449,7 @@ extern unsigned long UECSlastmillis;
 
 //######################################new
 bool UECSFindPGMChar(char* targetBuffer,const char *_romword_startStr,int *lastPos);
-bool UECSGetValPGMStrAndChr(char* targetBuffer,const char *_romword_startStr, char end_asciiCode, short *shortValue,int *lastPos);
+bool UECSGetValPGMStrAndChr(char* targetBuffer,const char *_romword_startStr, unsigned char end_asciiCode, short *shortValue,int *lastPos);
 //bool UECSGetValueBetweenChr(char* targetBuffer, char start_asciiCode, char end_asciiCode, short *shortValue,int *lastPos);
 bool UECSGetFixedFloatValue(char* targetBuffer,long *longVal,unsigned char *decimal,int *lastPos);
 bool UECSGetIPAddress(char *targetBuffer,unsigned char *,int *lastPos);

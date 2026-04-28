@@ -1707,12 +1707,12 @@ unsigned short _region,
 unsigned short _order,
 unsigned short _priority,
 unsigned char _decimal,
-char _ccmLevel)
+signed char _ccmLevel)
 {
  
 }
 */
-void UECSsetCCM(boolean _sender, signed char _num, const char* _name, const char* _type, const char* _unit, unsigned short _priority, unsigned char _decimal, char _ccmLevel)
+void UECSsetCCM(boolean _sender, signed char _num, const char* _name, const char* _type, const char* _unit, unsigned short _priority, unsigned char _decimal, signed char _ccmLevel)
 {
  if(_num > U_MAX_CCM || _num < 0){
     return;
@@ -2022,7 +2022,7 @@ return true;
 }
 
 //------------------------------------
-bool UECSGetValPGMStrAndChr(char* targetBuffer,const char *_romword_startStr, char end_asciiCode,short *shortValue,int *lastPos)
+bool UECSGetValPGMStrAndChr(char* targetBuffer,const char *_romword_startStr, unsigned char end_asciiCode,short *shortValue,int *lastPos)
 {
 int _targetBuffersize=strlen(targetBuffer);
 *lastPos=-1;
@@ -2062,7 +2062,7 @@ return true;
 
 /*
 //------------------------------------
-bool UECSGetValueBetweenChr(char* targetBuffer,char start_asciiCode, char end_asciiCode,short *shortValue,int *lastPos)
+bool UECSGetValueBetweenChr(char* targetBuffer,unsigned char start_asciiCode, unsigned char end_asciiCode,short *shortValue,int *lastPos)
 {
 int _targetBuffersize=strlen(targetBuffer);
 *lastPos=-1;
@@ -2165,7 +2165,7 @@ bool UECSGetFixedFloatValue(char* targetBuffer,long *longVal,unsigned char *deci
 int i;
 int validFlag=0;
 bool floatFlag=false;
-char signFlag=1;
+signed char signFlag=1;
 unsigned long newValue=0;
 unsigned long prvValue=0;
 
