@@ -1,7 +1,7 @@
 /////////////////////////////////////////
 //UARDECS Sample Program "Thermostat_JP"
 //UECS ccm "InAirTemp" recieving test Ver1.3
-//By H.kurosaki 2024/4/22
+//By H.kurosaki 2026/6/26
 //////////////////////////////////////////
 //[概要]
 //漢字表示テスト用のサンプルです。
@@ -9,7 +9,7 @@
 //CCMに送信される値(U_name,U_vender,U_uecsid)では英数のみ(タグ文字以外)です。
 //U_nodenameには字数制限があります。
 //それ以外のWeb用の表示文字列には字数制限がありません。
-//文字コードはUTF-8、英数は1byteですが、日本語は3byteになります。
+//文字コードはUTF-8、英数は1byteですが、日本語は3-4byteになります。
 //フラッシュメモリに格納可能であれば長い文字列でも表示可能です。
 
 //コンパイル環境の構築や他機種からソースコード移植を行う場合の注意点を一番後ろに記載しています
@@ -19,19 +19,23 @@
 
 
 /////////////////////////////////////
-//IP reset jupmer pin setting
+//IP reset jumper pin setting
 //IPアドレスリセット用ジャンパーピン設定
 /////////////////////////////////////
 const byte U_InitPin = 3;
 const byte U_InitPin_Sense=HIGH;//ソフトウェア上でSafeModeを抜けたい場合はLOWにしてください
 
 ////////////////////////////////////
-//Node basic infomation
+//Node basic information
 //ノードの基本情報
 ///////////////////////////////////
 const char U_name[] PROGMEM= "UARDECS Node v.1.1";//最大20文字,英数のみ使用可能(タグ使用禁止)
 const char U_vender[] PROGMEM= "XXXXXXXX Co.";//最大20文字,英数のみ使用可能(タグ使用禁止)
 const char U_uecsid[] PROGMEM= "000000000000";//12文字固定長、英数のみ使用可能
+//UECSIDについて
+//実験用途では000000000000のままで問題ありません。
+//製品として販売する場合は、UECS研究会がUECSIDの発行を行っているため、
+//発行されたUECSIDを記述してください。
 const char U_footnote[] PROGMEM= "UARDECS サンプルプログラム サーモスタット";//字数制限なし、日本語使用可能
 char U_nodename[20] = "漢字表示試験";//最大英数19文字(日本語だと6文字)、この値が有効になるのはSAFEMODEだけ、後からユーザーが入力します
 UECSOriginalAttribute U_orgAttribute;//この定義は弄らないで下さい
@@ -147,10 +151,13 @@ const char ccmUnitCnd[] PROGMEM= "";//英数のみ最大19文字
 //主にCCMの作成とMACアドレスの設定を行う
 //------------------------------------------------------
 void UserInit(){
-//MAC address is printed on sticker of Ethernet Shield.
-//You must assign unique MAC address to each nodes.
-//MACアドレス設定、必ずEthernet Shieldに書かれた値を入力して下さい。
-//全てのノードに異なるMACアドレスを設定する必要があります。
+//MACアドレスの設定
+//[実験用途の場合]
+//任意の値を設定できますが、同一ネットワーク内の他のノードとMACアドレスが
+//重複しないようにしてください。重複した機器が存在すると正常に通信できません。
+//[製品として販売する場合]
+//正規に取得したMACアドレスを記述するか、市販のMACアドレスROMを実装し、
+//そこから読み出した値を設定するよう処理を変更してください。
 U_orgAttribute.mac[0] = 0x11;
 U_orgAttribute.mac[1] = 0x22;
 U_orgAttribute.mac[2] = 0x33;
@@ -192,7 +199,7 @@ void UserEveryMinute(){
 //---------------------------------------------------------
 //メインループ
 //システムのタイマカウント，httpサーバーの処理，
-//UDP16520番ポートと16529番ポートの通信文をチェックした後，呼び出さされる関数。
+//UDP16520番ポートと16529番ポートの通信文をチェックした後，呼び出される関数。
 //呼び出される頻度が高いため，重い処理を記述しないこと。
 //---------------------------------------------------------
 void UserEveryLoop(){
@@ -242,20 +249,19 @@ else
 (1)コンパイル環境の構築(Arduino IDE1.8.19で確認済み)
 	(a)RP2040用ボードライブラリのインストール
 	ArduinoIDEを起動しファイル→環境設定→追加のボードマネージャのURLに以下のURLを入力します
-	https://github.com/WIZnet-ArduinoEthernet/arduino-pico/releases/download/global/package_rp2040-ethernet_index.json
+	https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
 
 	(b)ツール→ボード→ボードマネージャより
-	"Raspberry Pi Pico/RP2040 Ethernet"を検索しインストールします。
+	"RP2040"を検索し、"Raspberry Pi Pico/RP2040/RP2350 by Earle F Philhower, III"をインストールします。
 
-	(c)ツール→ボード→Raspberry Pi RP2040 Boards
-	から使用する適切な機種名を選んでください(Wiznet W5500-EVB-Picoなど)
+	(c)ツール→ボード→Raspberry Pi RP2040/RP2350 Boards
+	から使用する適切な機種名を選んでください(W5500-EVB-Pico, W5500-EVB-Pico2など)
 	
-	(d)https://github.com/H-Kurosaki/MyEthernet2
-	"MyEthernet2"をインストールします。zipファイルでダウンロードしたあと、解凍してlibrariesフォルダ内に置いてください。
+	(d)W5500用のEthernetライブラリ(MyEthernet2)は本ライブラリに同梱されているため、別途インストールする必要はありません。
 	
 	以上の処理(一度行えば次から不要です)で最低限このファイルがコンパイル可能な環境が整います。
 
-	以下の操作はボードを接続する事に毎回実行してください。
+	以下の操作はボードを接続するたびに実行してください。
 	(e)PCのUSBポートにボードを接続し、ツール→ボードより機種名が合っていることを確認します。
 
 	(f)コンパイル前にツール→シリアルポートから接続中のボードのシリアルポート番号を選んでください。
@@ -268,8 +274,7 @@ else
 (2)Arduino用のソースコードをUARDECS_PICOに移植する場合の注意点
 	Arduino用のUARDECSおよびUARDECS_MEGAとソースコードレベルで互換性があります。
 	ヘッダファイル(ライブラリ)の変更のみで大抵はコンパイルをそのまま通ります。
-	ヘッダファイルには最低限"#include <Uardecs_pico.h>"の記述のみ必要ですが、
-	Ethernet3.hは必須なので意図的に記述しています。
+	ヘッダファイルには"#include <Uardecs_pico.h>"の記述のみ必要です。
 
 	ただし、ハードウェアに依存する部分は変更が必要です。
 	本ライブラリが動作対象として想定しているPICO互換機のW5500-EVB-Picoでは以下のピンが最初から専有されています。
